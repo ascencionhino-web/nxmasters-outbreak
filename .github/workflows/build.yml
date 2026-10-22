@@ -1,0 +1,63 @@
+name: Build NRO
+
+# Compila el .nro de la rama (RE Outbreak / RE Outbreak File 2).
+# Los APK de NetherSX2 se descargan del release "inputs" de ESTE mismo repo,
+# que debe ser PRIVADO. El SDK de Mesa sale del ultimo release de tu fork
+# publico de danfromtico/mesa-switch. No hace falta ningun token.
+on:
+  push:
+    branches: [outbreak, outbreak-file2]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: devkitpro/devkita64:latest
+    permissions:
+      contents: read
+    env:
+      INPUTS_REPO: ${{ github.repository }}
+      INPUTS_TAG: inputs
+      MESA_REPO: ascencionhino-web/mesa-switch
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Dependencias
+        run: |
+          apt-get update
+          apt-get install -y cmake ninja-build python3 git curl ca-certificates gh
+          dkp-pacman -Syu --noconfirm
+          dkp-pacman -S --noconfirm switch-tools libnx switch-sdl2 switch-sdl2_ttf \
+            switch-sdl2_image switch-curl switch-mesa switch-libdrm_nouveau \
+            switch-ntfs-3g switch-libpng switch-libjpeg-turbo deko3d
+
+      - name: Descargar APK (release inputs de este repo privado)
+        run: |
+          mkdir -p "$RUNNER_TEMP/inputs"
+          gh release download "$INPUTS_TAG" --repo "$INPUTS_REPO" \
+            --dir "$RUNNER_TEMP/inputs" \
+            --pattern '*4248*.apk' --pattern '*3668*.apk'
+
+      - name: Descargar SDK de Mesa (ultimo release de tu fork de mesa-switch)
+        run: |
+          gh release download --repo "$MESA_REPO" \
+            --dir "$RUNNER_TEMP/inputs" \
+            --pattern '*switch-unified-horizon-sdk.zip'
+          ls -la "$RUNNER_TEMP/inputs"
+
+      - name: Compilar
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          export APK_4248="$(ls "$RUNNER_TEMP"/inputs/*4248*.apk | head -1)"
+          export APK_3668="$(ls "$RUNNER_TEMP"/inputs/*3668*.apk | head -1)"
+          export MESA_SDK_ZIP="$(ls "$RUNNER_TEMP"/inputs/*switch-unified-horizon-sdk.zip | head -1)"
+          JOBS=4 ./build_all.sh
+
+      - name: Subir .nro
+        uses: actions/upload-artifact@v4
+        with:
+          name: nro-${{ github.ref_name }}
+          path: NetherSX2.nro
