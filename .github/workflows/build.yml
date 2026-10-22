@@ -28,11 +28,16 @@ jobs:
       - name: Dependencias
         run: |
           apt-get update
-          apt-get install -y cmake ninja-build python3 git curl ca-certificates gh
-          dkp-pacman -Syu --noconfirm
-          dkp-pacman -S --noconfirm switch-tools libnx switch-sdl2 switch-sdl2_ttf \
-            switch-sdl2_image switch-curl switch-mesa switch-libdrm_nouveau \
-            switch-ntfs-3g switch-libpng switch-libjpeg-turbo deko3d
+          apt-get install -y build-essential cmake ninja-build pkg-config bison flex python3 git curl ca-certificates gh
+          PKGS="switch-tools libnx switch-sdl2 switch-sdl2_ttf switch-sdl2_image switch-curl switch-mesa switch-libdrm_nouveau switch-ntfs-3g switch-libpng switch-libjpeg-turbo deko3d"
+          ok=0
+          for i in 1 2 3 4 5; do
+            if dkp-pacman -S --noconfirm --needed $PKGS; then ok=1; break; fi
+            echo "Reintento $i: pkg.devkitpro.org fallo, esperando..."
+            sleep 30
+            dkp-pacman -Sy --noconfirm || true
+          done
+          test "$ok" = 1
 
       - name: Descargar APK (release inputs de este repo privado)
         run: |
