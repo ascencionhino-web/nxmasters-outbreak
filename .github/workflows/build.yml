@@ -54,7 +54,7 @@ jobs:
           export APK_4248="$(ls "$RUNNER_TEMP"/inputs/*4248*.apk | head -1)"
           export APK_3668="$(ls "$RUNNER_TEMP"/inputs/*3668*.apk | head -1)"
           export MESA_SDK_ZIP="$(ls "$RUNNER_TEMP"/inputs/*switch-unified-horizon-sdk.zip | head -1)"
-          JOBS=4 ./build_all.sh
+          JOBS=4 bash ./build_all.sh
 
       - name: Subir .nro
         uses: actions/upload-artifact@v4
