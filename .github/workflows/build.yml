@@ -53,6 +53,17 @@ jobs:
             --pattern '*switch-unified-horizon-sdk.zip'
           ls -la "$RUNNER_TEMP/inputs"
 
+      - name: libelf vacia (el Makefile la pide, Mesa para Switch no la usa)
+        run: |
+          lib=/opt/devkitpro/portlibs/switch/lib
+          if [ ! -f "$lib/libelf.a" ]; then
+            tmp="$(mktemp -d)"
+            echo 'void __nx_stub_libelf(void) {}' > "$tmp/stub_elf.c"
+            /opt/devkitpro/devkitA64/bin/aarch64-none-elf-gcc -c "$tmp/stub_elf.c" -o "$tmp/stub_elf.o"
+            /opt/devkitpro/devkitA64/bin/aarch64-none-elf-ar rcs "$lib/libelf.a" "$tmp/stub_elf.o"
+            echo "libelf.a vacia creada en $lib"
+          fi
+
       - name: Compilar
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
