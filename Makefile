@@ -91,10 +91,12 @@ LIBS := -Wl,--start-group $(DEKO3D_LIBS) -Wl,--end-group \
 else
 ifeq ($(RENDERER),VK)
 ifneq ($(strip $(MESA_SDK_ROOT)),)
+# libvulkan.a trae el runtime de Rust (core/std) sin indice de simbolos; libnak_rs.a
+# si lo indexa, asi que se enlaza tambien para resolver core::panicking, alloc, etc.
 # Unified Mesa SDK: the Vulkan driver and all private Mesa dependencies are
 # packaged in one archive. External dependencies stay in devkitPro portlibs.
 LIBDIRS	:= $(MESA_SDK_ROOT) $(PORTLIBS) $(LIBNX)
-LIBS	:= -Wl,--start-group -lvulkan -lEGL -lGLESv2 -lglapi \
+LIBS	:= -Wl,--start-group -lvulkan -lnak_rs -lEGL -lGLESv2 -lglapi \
 		-lmesa_util_c11 -lblake3 -lmesa_util -lmesa_util_simd -lxmlconfig \
 		-Wl,--end-group $(STORAGE_LIBS) -lcurl -lelf -lexpat -lz -lzstd \
 		-lnx -lstdc++ -lm
@@ -121,7 +123,7 @@ ifneq ($(strip $(MESA_SDK_ROOT)),)
 # The unified EGL archive contains both native NVC0 and Zink. Keep Vulkan in
 # the same rescan group so the GL host can select either driver at runtime.
 LIBDIRS	:= $(MESA_SDK_ROOT) $(PORTLIBS) $(LIBNX)
-LIBS	:= -Wl,--start-group -lvulkan -lEGL -lGLESv2 -lglapi \
+LIBS	:= -Wl,--start-group -lvulkan -lnak_rs -lEGL -lGLESv2 -lglapi \
 		-lmesa_util_c11 -lblake3 -lmesa_util -lmesa_util_simd -lxmlconfig \
 		-Wl,--end-group $(STORAGE_LIBS) -lcurl -lelf -lexpat -lz -lzstd \
 		-lnx -lstdc++ -lm
