@@ -3,6 +3,9 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 
+#if __has_include("fixed_game.h")
+#include "fixed_game.h"
+#endif
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
@@ -47,21 +50,21 @@
 #define BTN_X        SDL_CONTROLLER_BUTTON_Y
 #define BTN_Y        SDL_CONTROLLER_BUTTON_X
 
-static const char *DATA_DIR    = "sdmc:/switch/nethersx2";
-static const char *LAUNCHER_INI= "sdmc:/switch/nethersx2/launcher.ini";
-static const char *EMU_INI     = "sdmc:/switch/nethersx2/nethersx2.ini";
-static const char *COVERS_DIR = "sdmc:/switch/nethersx2/covers";
-static const char *CORES_DIR  = "sdmc:/switch/nethersx2/cores";
-static const char *GAMECFG_DIR= "sdmc:/switch/nethersx2/gamecfg";
-static const char *GAMECRC_DIR= "sdmc:/switch/nethersx2/gamecrc";
-static const char *CHEATS_DIR = "sdmc:/switch/nethersx2/cheats";
-static const char *TEXTURES_DIR = "sdmc:/switch/nethersx2/textures";
-static const char *DEF_GAMEDIR= "sdmc:/switch/nethersx2/games";
-static const char *BIOS_DIR   = "sdmc:/switch/nethersx2/bios";
-static const char *RESOURCES_DIR = "sdmc:/switch/nethersx2/resources";
-static const char *LSFG_DIR = "sdmc:/switch/nethersx2/lsfg";
-static const char *EMU_HOST_DIR = "sdmc:/switch/nethersx2/.emu";
-static const char *LSFG_DLL_FILE = "sdmc:/switch/nethersx2/lsfg/Lossless.dll";
+static const char *DATA_DIR    = "sdmc:/switch/nxmasters";
+static const char *LAUNCHER_INI= "sdmc:/switch/nxmasters/launcher.ini";
+static const char *EMU_INI     = "sdmc:/switch/nxmasters/nethersx2.ini";
+static const char *COVERS_DIR = "sdmc:/switch/nxmasters/covers";
+static const char *CORES_DIR  = "sdmc:/switch/nxmasters/cores";
+static const char *GAMECFG_DIR= "sdmc:/switch/nxmasters/gamecfg";
+static const char *GAMECRC_DIR= "sdmc:/switch/nxmasters/gamecrc";
+static const char *CHEATS_DIR = "sdmc:/switch/nxmasters/cheats";
+static const char *TEXTURES_DIR = "sdmc:/switch/nxmasters/textures";
+static const char *DEF_GAMEDIR= "sdmc:/switch/nxmasters/games";
+static const char *BIOS_DIR   = "sdmc:/switch/nxmasters/bios";
+static const char *RESOURCES_DIR = "sdmc:/switch/nxmasters/resources";
+static const char *LSFG_DIR = "sdmc:/switch/nxmasters/lsfg";
+static const char *EMU_HOST_DIR = "sdmc:/switch/nxmasters/.emu";
+static const char *LSFG_DLL_FILE = "sdmc:/switch/nxmasters/lsfg/Lossless.dll";
 static const char *LAUNCHER_NRO = "sdmc:/switch/NetherSX2.nro";
 static std::string g_launcherNroPath = LAUNCHER_NRO;
 
@@ -77,7 +80,7 @@ static Store g_game;
 static Store g_titles;
 static Store g_library;
 static Store *g_active = &g_global;
-static const char *TITLES_INI = "sdmc:/switch/nethersx2/titles.ini";
+static const char *TITLES_INI = "sdmc:/switch/nxmasters/titles.ini";
 static LauncherLocalization g_localization;
 
 static const char* tr(const char* source)
@@ -2066,8 +2069,8 @@ static Uint32 g_backgroundSince=0;
 
 static std::string foldedKey(std::string key);
 static Store g_recent;
-static const char *RECENT_INI = "sdmc:/switch/nethersx2/recent.ini";
-static const char *LIBRARY_INI = "sdmc:/switch/nethersx2/library.ini";
+static const char *RECENT_INI = "sdmc:/switch/nxmasters/recent.ini";
+static const char *LIBRARY_INI = "sdmc:/switch/nxmasters/library.ini";
 
 static void loadLibraryOrganization(){
   g_favorites.clear();
@@ -6806,7 +6809,7 @@ static bool extractTree(const std::string &src, const std::string &dst, bool for
 }
 
 static const char *BUILD_STAMP = __DATE__ " " __TIME__;
-static const char *RES_MARKER = "sdmc:/switch/nethersx2/resources/.nethersx2_build";
+static const char *RES_MARKER = "sdmc:/switch/nxmasters/resources/.nethersx2_build";
 static bool ensureResources(const std::string &build) {
   char cur[64] = {0};
   FILE *f = fopen(RES_MARKER, "r");
@@ -7388,6 +7391,13 @@ int main(int argc, char **argv){
       forwarderKey=candidate;
     }
   }
+#ifdef FIXED_DISC
+  if(!forwarderRequested){
+    forwarderRequested=true;
+    forwarderDirectPath=true;
+    forwarderKey=normalizeLocationPath(FIXED_DISC);
+  }
+#endif
   if(!forwarderRequested) for(int argument=1;argument+1<argc;argument++) if(!strcmp(argv[argument],"-g")){
     forwarderRequested=true;
     forwarderKey=argv[argument+1];
@@ -7442,7 +7452,7 @@ int main(int argc, char **argv){
   if(isAppletMode()){
     (void)ensureDirectory("sdmc:/switch");
     (void)ensureDirectory(DATA_DIR);
-    (void)ensureDirectory("sdmc:/switch/nethersx2/forwarders");
+    (void)ensureDirectory("sdmc:/switch/nxmasters/forwarders");
     runAppletInstaller();
     cleanupLauncher();
     return 0;
@@ -7935,7 +7945,7 @@ int main(int argc, char **argv){
 
     appletSetCpuBoostMode(ApmCpuBoostMode_Normal);
     if(haveCore){
-      std::string corePath="/switch/nethersx2/cores/libemucore_"+build+".so";
+      std::string corePath="/switch/nxmasters/cores/libemucore_"+build+".so";
       storeSet(g_global,"Wrapper/CoreSo",corePath.c_str());
       storeSet(effective,"Wrapper/CoreSo",corePath.c_str());
     }

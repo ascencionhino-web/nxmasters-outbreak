@@ -132,4 +132,4 @@ echo
 echo "Done. The only file to copy:"
 ls -la "$APP/NetherSX2.nro"
 echo
-echo "SD layout: sdmc:/switch/NetherSX2.nro + sdmc:/switch/nethersx2/"
+echo "SD layout: sdmc:/switch/NetherSX2.nro + sdmc:/switch/nxmasters/"

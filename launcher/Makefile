@@ -22,8 +22,8 @@ INCLUDES	:=	include ../source/switch \
 			dependencies/build/_deps/libusbhsfs-src/include
 ROMFS		:=	romfs		# bundles the emulator cores (cores/emucore_*.so)
 
-APP_TITLE	:=	NetherSX2
-APP_AUTHOR	:=	naga
+APP_TITLE	:=	RE Outbreak
+APP_AUTHOR	:=	grupo NX masters
 APP_VERSION	:=	1.4.0
 RELEASE_VERSION	?=	$(APP_VERSION)
 

@@ -31,7 +31,7 @@
 // On-SD layout. Paths are plain absolute SD paths (no "sdmc:" prefix): the core's
 // PCSX2 FileSystem treats a colon as a scheme, and libnx resolves "/..." to the SD
 // root, keeping the core off its Java FileHelper (SAF) bridge.
-#define DATA_ROOT      "/switch/nethersx2"
+#define DATA_ROOT      "/switch/nxmasters"
 #define RESOURCES_DIR  DATA_ROOT "/resources"
 #define CHEATS_DIR     DATA_ROOT "/cheats"
 #define BIOS_DIR       DATA_ROOT "/bios"
