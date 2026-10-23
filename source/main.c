@@ -144,7 +144,7 @@ static int dir_nonempty(const char *p) {
 
 static void check_data(const char *core_so, const char *disc_path) {
   if (!path_exists(core_so))
-    fatal_error("Could not find\n%s.\nPlace it in /switch/nethersx2/\n(extract from the APK lib/arm64-v8a/).", core_so);
+    fatal_error("Could not find\n%s.\nPlace it in /switch/nxmasters/\n(extract from the APK lib/arm64-v8a/).", core_so);
   if (!dir_nonempty(RESOURCES_DIR))
     fatal_error("Missing %s.\nCopy the APK assets/ folder there\n(shaders, GameIndex.yaml, fonts).", RESOURCES_DIR);
 #if GS_RENDERER == GS_RENDERER_VK
@@ -160,7 +160,7 @@ static void check_data(const char *core_so, const char *disc_path) {
   if (!dir_nonempty(BIOS_DIR))
     fatal_error("Missing %s.\nPlace your PS2 BIOS dump there.", BIOS_DIR);
   if (disc_path && *disc_path && !path_exists(disc_path))
-    fatal_error("Boot disc not found:\n%s\nSet EmuCore/DiscPath in %s\nor place game.iso in /switch/nethersx2/.",
+    fatal_error("Boot disc not found:\n%s\nSet EmuCore/DiscPath in %s\nor place game.iso in /switch/nxmasters/.",
                 disc_path, PREFS_NAME);
 }
 
@@ -1095,7 +1095,7 @@ static void quick_menu_draw_cheats(void) {
   } else if (!g_quick_cheat_load_ok) {
     text_append(text, sizeof(text), "Could not read %08X.pnach.\n\n> Back\n", crc);
   } else if (!g_quick_cheats.file_exists) {
-    text_append(text, sizeof(text), "No cheat file found.\n\nPlace %08X.pnach in:\n/switch/nethersx2/cheats/\n\n> Back\n", crc);
+    text_append(text, sizeof(text), "No cheat file found.\n\nPlace %08X.pnach in:\n/switch/nxmasters/cheats/\n\n> Back\n", crc);
   } else if (!g_quick_cheats.count) {
     text_append(text, sizeof(text), "No named PNACH code blocks were found.\n\n> Back\n");
   } else {

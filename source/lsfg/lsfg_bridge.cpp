@@ -88,7 +88,7 @@ struct LsfgNxRuntime {
             .queue = info.queue,
             .getInstanceProcAddr = info.get_instance_proc_addr,
             .pipelineCachePath = std::filesystem::path(
-                "/switch/nethersx2/cache/lsfg-vk-pipeline-cache.bin")
+                "/switch/nxmasters/cache/lsfg-vk-pipeline-cache.bin")
         };
 
         backend = std::make_unique<lsfgvk::backend::Instance>(

@@ -30,7 +30,7 @@ backgrounds while keeping existing local artwork.
 **L + R + Plus** to open the quick menu for save states, controller rebinding,
 selectable per-game PNACH cheat codes, RetroAchievements progress,
 frame-limiter control, reset, and exit.
-The cheat browser reads `/switch/nethersx2/cheats/<CRC>.pnach`, recognizes PNACH
+The cheat browser reads `/switch/nxmasters/cheats/<CRC>.pnach`, recognizes PNACH
 `[sections]` and legacy `// code name` blocks.
 
 No emulator core, BIOS, or game assets are included in this repository.
@@ -38,13 +38,13 @@ No emulator core, BIOS, or game assets are included in this repository.
 ### How to install
 
 1. Copy `NetherSX2.nro` into `/switch/` on your SD card.
-2. Put your own PS2 BIOS dump into `/switch/nethersx2/bios/`.
+2. Put your own PS2 BIOS dump into `/switch/nxmasters/bios/`.
 
 The launcher creates the rest of the folder tree on first run:
 
 ```
 /switch/NetherSX2.nro
-/switch/nethersx2/
+/switch/nxmasters/
   .emu/         <- extracted when selected
   bios/         <- your PS2 BIOS dump           (you supply)
   resources/    <- shaders / GameIndex / fonts  (auto-extracted per core)
@@ -79,7 +79,7 @@ and exits before the emulator starts.
 
 LSFG 2x Frame Generation is available for Vulkan and Deko3D in
 **Settings > Frame Generation**.
-You must provide your own `Lossless.dll` at `/switch/nethersx2/lsfg/Lossless.dll`.
+You must provide your own `Lossless.dll` at `/switch/nxmasters/lsfg/Lossless.dll`.
 LSFG must be enabled before launching a game so its shader session can be
 prepared. Frame Generation starts **Off** in every game and must be enabled
 manually from **L + R + Plus > Frame Generation**. Skip Duplicate Frames is

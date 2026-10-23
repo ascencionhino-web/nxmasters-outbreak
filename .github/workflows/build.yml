@@ -6,7 +6,7 @@ name: Build NRO
 # publico de danfromtico/mesa-switch. No hace falta ningun token.
 on:
   push:
-    branches: [outbreak, outbreak-file2]
+    branches: ['game/**', outbreak, outbreak-file2]
   workflow_dispatch:
 
 jobs:
@@ -72,8 +72,11 @@ jobs:
           export MESA_SDK_ZIP="$(ls "$RUNNER_TEMP"/inputs/*switch-unified-horizon-sdk.zip | head -1)"
           JOBS=4 bash ./build_all.sh
 
+      - name: Nombre del artefacto
+        id: slug
+        run: echo "v=$(echo "$GITHUB_REF_NAME" | tr '/' '-')" >> "$GITHUB_OUTPUT"
       - name: Subir .nro
         uses: actions/upload-artifact@v4
         with:
-          name: nro-${{ github.ref_name }}
+          name: nro-${{ steps.slug.outputs.v }}
           path: NetherSX2.nro

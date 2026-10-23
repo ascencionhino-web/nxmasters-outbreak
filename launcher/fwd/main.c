@@ -4,7 +4,7 @@
 
 #define EXIT_DETECTION_STR "__NETHERSX2_FORWARDER_EXIT__"
 #ifndef FWD_CFG_DIR
-#define FWD_CFG_DIR "/switch/nethersx2/forwarders/"
+#define FWD_CFG_DIR "/switch/nxmasters/forwarders/"
 #endif
 _Static_assert(sizeof(FWD_CFG_DIR) + 20 <= 64, "forwarder config path is too long");
 
