@@ -6,6 +6,7 @@
 #include "fixed.h"
 
 static const char *CAND[] = {
+    "sdmc:/switch/nxmasters/cores/%s.nro",
     "sdmc:/tico/cores/%s.nro",
     "sdmc:/switch/tico/cores/%s.nro",
     "sdmc:/switch/%s/%s.nro",
