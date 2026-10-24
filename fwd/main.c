@@ -24,8 +24,9 @@ int main(int argc, char **argv) {
         if (exists(path)) { found = path; break; }
     }
     if (found && exists(FWD_ROM)) {
+// Orden que entienden todos los nucleos de Tico: juego, titulo, consola.
 #if FWD_MODE == 0
-        snprintf(args, sizeof(args), "\"%s\" %s \"%s\" \"%s\"", found, FWD_SLUG, FWD_ROM, FWD_TITLE);
+        snprintf(args, sizeof(args), "\"%s\" \"%s\" \"%s\" %s", found, FWD_ROM, FWD_TITLE, FWD_SLUG);
 #else
         snprintf(args, sizeof(args), "\"%s\" \"%s\"", found, FWD_ROM);
 #endif
