@@ -2,7 +2,7 @@ name: Build NRO
 
 # Compila el .nro de la rama (RE Outbreak / RE Outbreak File 2).
 # Los APK de NetherSX2 se descargan del release "inputs" de ESTE mismo repo,
-# que debe ser PRIVADO. El SDK de Mesa sale del ultimo release de tu fork
+# (repo plantilla publico; cada usuario usa el de ascencionhino-web). El SDK de Mesa sale del ultimo release de tu fork
 # publico de danfromtico/mesa-switch. No hace falta ningun token.
 on:
   push:
@@ -16,7 +16,7 @@ jobs:
     permissions:
       contents: read
     env:
-      INPUTS_REPO: ${{ github.repository }}
+      INPUTS_REPO: ascencionhino-web/nxmasters-outbreak
       INPUTS_TAG: inputs
       MESA_REPO: ascencionhino-web/mesa-switch
       GH_TOKEN: ${{ github.token }}
