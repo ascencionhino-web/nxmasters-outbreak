@@ -7588,6 +7588,27 @@ int main(int argc, char **argv){
     game.legacyUnique=false;
     game.played=atoll(gameStoreGet(g_recent,game,"0"));
     game.hasCfg=gameFileExists(GAMECFG_DIR,game,".ini");
+#ifdef FIXED_DISC
+    {
+      // Ventana corta: tocar la pantalla abre los ajustes de este juego.
+      bool openMenu=false;
+      const Uint32 until=SDL_GetTicks()+2500;
+      while(!openMenu&&!SDL_TICKS_PASSED(SDL_GetTicks(),until)&&beginUiFrame()){
+        SDL_Event ev;
+        while(pollUiEvent(ev))
+          if(ev.type==SDL_FINGERDOWN||ev.type==SDL_MOUSEBUTTONDOWN) openMenu=true;
+        SDL_SetRenderDrawColor(g_ren,0,0,0,255);
+        SDL_RenderClear(g_ren);
+        drawTextC(g_font,SW/2,SH/2-16,"Toca la pantalla para abrir los ajustes",SDL_Color{255,255,255,255});
+        SDL_RenderPresent(g_ren);
+        waitForNextFrame();
+      }
+      if(openMenu){
+        perGameMenu(game,g_pad);
+        game.hasCfg=gameFileExists(GAMECFG_DIR,game,".ini");
+      }
+    }
+#endif
     selectGame(game);
     return true;
   };
