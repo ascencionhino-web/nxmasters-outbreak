@@ -18,11 +18,16 @@
 #include <unistd.h>
 
 #include <switch.h>
+#ifndef FWD_NO_SDL
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <turbojpeg.h>
+#endif
 
 std::string g_forwarderSelfPath;
+// Lanzador de nucleos Tico (fwd/): clave unica por juego y argumentos extra del icono.
+std::string g_forwarderHashKey;
+std::string g_forwarderExtraArgs;
 
 namespace {
 
@@ -699,6 +704,13 @@ bool readFile(const std::string &path, std::vector<u8> &out)
     return ok;
 }
 
+#ifdef FWD_NO_SDL
+// Lanzador Tico: el icono ya es un JPEG de 256x256 hecho por la pagina.
+bool makeNacpIcon(const std::string &src, std::vector<u8> &out)
+{
+    return readFile(src, out) && out.size() < 0x20000;
+}
+#else
 bool makeNacpIcon(const std::string &src, std::vector<u8> &out)
 {
     SDL_Surface *img = IMG_Load(src.c_str());
@@ -722,6 +734,7 @@ bool makeNacpIcon(const std::string &src, std::vector<u8> &out)
     SDL_FreeSurface(rgb);
     return ok;
 }
+#endif
 
 constexpr Result kForwarderIoError = MAKERESULT(299, 1);
 
@@ -1216,14 +1229,17 @@ Result install_forwarder(const std::string &gameKey, const std::string &name,
         return kForwarderIoError;
     const bool quotePath = nroPath.find_first_of(" \t") != std::string::npos;
     const std::string launcherArgument=quotePath ? "\""+nroPath+"\"" : nroPath;
-    const std::string args = launcherOnly ? launcherArgument :
+    const bool tico = !g_forwarderHashKey.empty();
+    const std::string args = tico ? launcherArgument+" "+g_forwarderExtraArgs :
+                             launcherOnly ? launcherArgument :
                              launcherArgument+" -g \""+gameKey+"\"";
     if (nroPath.empty() || nroPath.size() >= FS_MAX_PATH ||
         nroPath.size() + args.size() + 2 > 2046)
         return kForwarderIoError;
 
     u64 hashData[SHA256_HASH_SIZE / sizeof(u64)];
-    const std::string hashSource = launcherOnly ? "nethersx2-launcher" :
+    const std::string hashSource = tico ? "nxmasters-fwd:"+g_forwarderHashKey :
+                                   launcherOnly ? "nethersx2-launcher" :
                                                   "nethersx2-forwarder:"+gameKey;
     sha256CalculateHash(hashData, hashSource.data(), hashSource.length());
     const u64 tid = 0x0500000000000000 | (hashData[0] & 0x00FFFFFFFFFFF000);
@@ -1426,4 +1442,16 @@ bool forwarder_create_launcher(char *err,std::size_t errSize)
 #else
     return forwarder_create_common("launcher","NetherSX2","","romfs:/forwarder-icon.jpg",true,err,errSize);
 #endif
+}
+
+// Lanzador de nucleos Tico: icono del HOME que abre este mismo .nro con "--play".
+bool forwarder_create_tico(const std::string &key, const std::string &name, const std::string &author,
+                           const std::string &iconImgPath, char *err, std::size_t errSize)
+{
+    g_forwarderHashKey = key;
+    g_forwarderExtraArgs = "--play";
+    const bool ok = forwarder_create_common(key, name, author, iconImgPath, true, err, errSize);
+    g_forwarderHashKey.clear();
+    g_forwarderExtraArgs.clear();
+    return ok;
 }
