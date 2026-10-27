@@ -22,6 +22,7 @@ jobs:
           done
 
       - name: Compilar
+        shell: bash
         run: |
           export DEVKITPRO=/opt/devkitpro
           # 1) pieza del icono del HOME (forwarder hbloader) -> launcher/romfs/fwd
