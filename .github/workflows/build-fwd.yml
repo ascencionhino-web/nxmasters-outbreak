@@ -25,7 +25,9 @@ jobs:
         run: |
           export DEVKITPRO=/opt/devkitpro
           # 1) pieza del icono del HOME (forwarder hbloader) -> launcher/romfs/fwd
-          make -C launcher/fwd
+          make -C launcher/fwd > /tmp/stub.log 2>&1 || {
+            msg=$(tail -n 20 /tmp/stub.log | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
+            echo "::error title=Fallo la pieza del icono::$msg"; exit 1; }
           mkdir -p fwd/romfs/fwd
           cp launcher/romfs/fwd/hbl.nso launcher/romfs/fwd/hbl.npdm launcher/romfs/fwd/default.nacp fwd/romfs/fwd/
           cp fwd/icon.jpg fwd/romfs/home-icon.jpg
