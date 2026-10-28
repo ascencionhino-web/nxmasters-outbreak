@@ -23,6 +23,13 @@ static const char *CAND[] = {
     "sdmc:/tico/%s.nro",
 };
 
+// Homebrew Menu abierto desde el Album (modo applet): aqui no se puede jugar, solo instalar el icono.
+static bool modoApplet()
+{
+    const AppletType t = appletGetAppletType();
+    return t != AppletType_Application && t != AppletType_SystemApplication;
+}
+
 static bool existe(const char *p) { struct stat st; return stat(p, &st) == 0; }
 
 static std::string claveIcono()
@@ -94,14 +101,15 @@ static void instalarIcono(PadState &pad)
         printf("LISTO. Vuelve al menu HOME: ya esta el icono.\n");
     } else {
         printf("ERROR: %s\n\n", err[0] ? err : "desconocido");
-        printf("Prueba abrirlo en modo titulo (manten R al abrir un juego)\no desde el album, y revisa que tengas sigpatches.\n");
+        printf("Abre este programa desde el ALBUM (modo applet) para instalar el icono,\ny revisa que tengas sigpatches.\n");
     }
-    printf("\nPulsa A para jugar ahora, + para salir.\n");
+    if (modoApplet()) printf("\nPara jugar usa el icono del menu HOME (abre en modo titulo).\n\nPulsa + para salir.\n");
+    else printf("\nPulsa A para jugar ahora, + para salir.\n");
     consoleUpdate(NULL);
     while (appletMainLoop()) {
         padUpdate(&pad);
         const u64 k = padGetButtonsDown(&pad);
-        if (k & HidNpadButton_A) { consoleExit(NULL); jugar(pad, false); return; }
+        if (!modoApplet() && (k & HidNpadButton_A)) { consoleExit(NULL); jugar(pad, false); return; }
         if (k & HidNpadButton_Plus) break;
         consoleUpdate(NULL);
     }
@@ -122,6 +130,22 @@ int main(int argc, char **argv)
     padInitializeDefault(&pad);
     romfsInit();
 
+    if (modoApplet()) {
+        // Sin cuenta regresiva: en applet el nucleo no funciona, asi que solo se ofrece el icono.
+        consoleClear();
+        printf("\n  %s\n\n  Pulsa A: poner el juego en el menu HOME\n  Pulsa + para salir\n\n"
+               "  (Para jugar, usa luego el icono del HOME,\n   o abre este programa en modo titulo: manten R.)\n", FWD_TITLE);
+        consoleUpdate(NULL);
+        while (appletMainLoop()) {
+            padUpdate(&pad);
+            const u64 k = padGetButtonsDown(&pad);
+            if (k & HidNpadButton_A) { instalarIcono(pad); break; }
+            if (k & HidNpadButton_Plus) break;
+            consoleUpdate(NULL);
+        }
+        romfsExit();
+        return 0;
+    }
     const u64 inicio = armGetSystemTick();
     int mostrado = -1;
     while (appletMainLoop()) {
