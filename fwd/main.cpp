@@ -146,13 +146,18 @@ int main(int argc, char **argv)
         romfsExit();
         return 0;
     }
+    // Al abrir con R apretado (modo titulo) ese boton llega como "pulsado": se ignora todo
+    // lo que ya estaba apretado y solo cuenta A pulsado despues.
+    padUpdate(&pad);
+    u64 retenidos = padGetButtons(&pad);
     const u64 inicio = armGetSystemTick();
     int mostrado = -1;
     while (appletMainLoop()) {
         const int resta = 5 - (int)(armTicksToNs(armGetSystemTick() - inicio) / 1000000000ULL);
         if (resta <= 0) break;
         padUpdate(&pad);
-        const u64 k = padGetButtonsDown(&pad);
+        retenidos &= padGetButtons(&pad);                 // lo que sigue apretado desde el inicio
+        const u64 k = padGetButtonsDown(&pad) & ~retenidos;
         if (k & HidNpadButton_A) {
             consoleClear();
             printf("%s\n\nPoner este juego en el menu HOME instala un titulo no oficial.\n"
@@ -169,7 +174,6 @@ int main(int argc, char **argv)
             }
             break;
         }
-        if (k) break;                           // cualquier otro boton: jugar ya
         if (resta != mostrado) {
             mostrado = resta;
             consoleClear();
